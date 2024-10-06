@@ -1,44 +1,60 @@
-clc;
-clear;
 close all;
+clear;
+clc;
 
-image = imread('black.jpg');
-image = 0.59 * image(:,:,1) + 0.3 * image(:,:,2) + 0.11 * image(:,:,3);
-figure(1), imshow(image), title('Original gray image');
+image = imread("pout.tif");
+image2 = imread("image2.jpg");
 
-histo = zeros(1,256);
+figure();
+
+subplot(221);
+imshow(image);
+
+hist = zeros(1,256);
+
 [n,m] = size(image);
 
 for i = 1:n
     for j = 1:m
-        histo(1,image(i,j)+1) = histo(1,image(i,j) + 1) + 1;
+        hist(1,image(i,j) + 1) = hist(1,image(i,j) + 1) + 1;
     end
 end
-x = 1:256;
-figure, stem(x,histo),title('Histogram of original gray image');
+
+x = 0:255;
+subplot(222), stem(x,hist);
 
 
-pdf = histo/(n*m);
-cdf = cumsum(pdf);
+pdf = hist/(n*m);
+cdf = zeros(1,256);
+cdf(1) = pdf(1);
+
+for i=2:256
+    cdf(i) = cdf(i-1) + pdf(i);
+end
 
 cdf = uint8(cdf*255);
+
 new_image = zeros(n,m);
+
 for i = 1:n
     for j = 1:m
         new_image(i,j) = new_image(i,j) + cdf(image(i,j) + 1);
     end
 end
 
-new_histo = zeros(1,256);
+subplot(223), imshow(uint8(new_image));
+
+
+new_hist = zeros(1,256);
 
 for i = 1:n
     for j = 1:m
-        new_histo(1, new_image(i,j) + 1) = new_histo(1, new_image(i,j) + 1) + 1;
+        new_hist(1,new_image(i,j) + 1) = new_hist(1,new_image(i,j) + 1) + 1;
     end
 end
 
-figure, imshow(uint8(new_image)),title('Equalize image');
-figure, stem(x,new_histo),title('Equalize image histogram');
+
+subplot(224), stem(x,new_hist);
 
 
 
