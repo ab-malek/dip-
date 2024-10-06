@@ -1,34 +1,38 @@
-clc;
-clear;
 close all;
+clear;
+clc;
 
-a = imread('image.jpg');
+image1 = imread("image1.jpg");
+image2 = imread("image2.jpg");
 
-figure,imshow(a),title('Original image');
+figure();
 
-b = 0.3*a(:,:,1) + 0.59*a(:,:,2) + 0.11*a(:,:,3);
+subplot(221),imshow(image1);
 
-figure, imshow(b), title('Gray scale image');
+g_image = 0.3*image1(:,:,1) + 0.59*image1(:,:,2) + image1(:,:,3);
 
+subplot(222), imshow(g_image);
 
-% Gray scal to monochrom
+histogram = zeros(1,256);
 
-histogram = 1:256;
+[n,m] = size(g_image);
 
-[n,m] = size(b);
+mono = zeros(n,m);
 
-for i=1:n
-    for j=1:m
-        if(b(i,j) < 128)
-            g(i,j) = 0;
+for i = 1:n
+    for j = 1:m
+        if(g_image(i,j) < 128)
+            mono(i,j) = 0;
             histogram(1) = histogram(1) + 1;
         else
-            g(i,j) = 255;
-            histogram(255) = histogram(255) + 1;
+            mono(i,j) = 255;
+            histogram(256) = histogram(256) + 1;
         end
     end
 end
 
-figure, imshow(g),title('Monochrom image');
+subplot(223), imshow(mono);
+
 x = 1:256;
-figure, stem(x,histogram),title('Histogram of monochrome');
+
+subplot(224), stem(x,histogram);
