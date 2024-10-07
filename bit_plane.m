@@ -1,21 +1,32 @@
-clc;
-clear;
 close all;
+clear;
+clc;
 
-image = imread('black.jpg');
-image = rgb2gray(image);
-image = double(image);
+img = imread('pout.tif');
 
-len = 8;
-figure;
-subplot(3,3,1);
-imshow(uint8(image));
+bit_plane = cell(1,8);
+img = double(img);
 
-for i = 1:len
-    b = mod(image,2);
-    subplot(3,3,i+1);
-    imshow(b);
-    title(sprintf('Bit plane %d', i));
-    image = floor(image/2);
+bits = 8;
+figure();
+for i = 1:bits
+    bit_plane{i} = img - 2*floor(img/2);
+    img = floor(img/2);
+    subplot(2,4,i);
+    imshow(bit_plane{i});
+    title(sprintf('Bit plane %d',i));
 end
+
+
+construct_img = zeros(size(img));
+
+for i = 1:bits
+    construct_img = construct_img + bit_plane{i} * 2^(i-1);
+end
+
+figure();
+imshow(uint8(construct_img));
+
+
+
 
